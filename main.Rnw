@@ -1,0 +1,265 @@
+\documentclass{beamer}
+\input{BeamOptions.tex}
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+options(replace.assign=TRUE, width=40)
+opts_knit$set(progress=FALSE)
+@
+
+\title[BBLeagues]{BBLeagues\\ Basketball Database System}
+\institute{CSU, Chico CINS 370} 
+\author[C. Hamelehle, A. Jenkins, K. Siew]
+{Cory Hamelehle, Adam Jenkins, Kok Siew}
+\date{\today}
+\maketitle
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% frames %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{ER Diagram}
+
+\begin{frame}
+  \frametitle{ER Diagram}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.38]{figs/er_diagram.png}
+\end{figure}
+
+\end{frame}
+
+\section{SQL Tables}
+
+\begin{frame}
+  \frametitle{SQL Tables}
+  Table definitions for our four tables
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{figs/season.png}
+  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{SQL Tables}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{figs/player.png}
+  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{SQL Tables}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{figs/team.png}
+  
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{SQL Tables}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{figs/stats_set.png}
+  
+\end{figure}
+
+\end{frame}
+
+\section{Making .csv files}
+
+\begin{frame}
+  \frametitle{Making .csv files}
+  In order to make our own .csv files from the data, we used a combination of spool and PL/SQL. Spool is a tool in Oracle that writes everything printed to standard out to the specified file and the PL/SQL code below allowed us to print the ages of players and their salaries separated by comma.
+
+  \begin{figure}
+    \center
+    \includegraphics[scale=0.46]{figs/plsql.png}
+  \end{figure}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Running spool and the PL/SQL script}
+
+  \begin{figure}
+    \center
+    \includegraphics[scale=0.54]{figs/spool.png}
+  \end{figure}
+
+  \begin{figure}
+    \center
+    \includegraphics[scale=0.46]{figs/complete.png}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{View of .csv file created}
+
+  \begin{figure}
+    \center
+    \includegraphics[scale=0.46]{figs/csvfile.png}
+  \end{figure}
+
+\end{frame}
+
+\section{Plots}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+  Now that the .csv files have been created, we can then plot them using R
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/age_salary.csv")
+  nba <- na.omit(nba)
+  library(ggplot2)
+  p <- qplot(Age, Salary, data = nba, 
+      main = "Age v Salary")
+  @
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+  <<echo = FALSE, fig.width = 5.4, fig.height = 4.0, fig.align = "center">>=
+  p
+  @
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/age.csv")
+  p <- qplot(AGE, data = nba, geom = "histogram", 
+      main = "Ages of players in the NBA",
+      xlab = "Age", binwidth = 1)
+  @
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+
+  <<echo = FALSE, fig.width = 4.4, fig.height = 3.4, fig.align = "center">>=
+  p
+  @
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/min_per.csv")
+  p <- qplot(min, per, data = nba, 
+      main = "Minutes played v PER", 
+      xlab = "Minutes played", 
+      ylab = "Player efficiency rating") +
+      geom_smooth(method = "lm", se = FALSE)
+  @
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+
+  <<echo = FALSE, fig.width = 5.4, fig.height = 3.9, fig.align = "center">>=
+  p
+  @
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/salary_ws.csv")
+  nba <- na.omit(nba)
+  p <- qplot(salary, ws, data = nba, 
+      main = "Salary v Win Shares", 
+      xlab = "Salary", ylab = "Win Shares") + 
+      geom_smooth(method = "lm", se = FALSE)
+  @
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+
+  <<echo = FALSE, fig.width = 5.4, fig.height = 3.9, fig.align = "center">>=
+  p
+  @
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/min_ts_pct.csv")
+  nba <- na.omit(nba)
+  p <- qplot(min, ts_pct, data = nba, 
+      main = "Minutes Played v True Shooting Percentage", 
+      xlab = "Minutes Played", 
+      ylab = "True Shooting Percentage") + 
+      geom_smooth(method = "lm", se = FALSE)
+  @
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+
+  <<echo = FALSE, fig.width = 5.4, fig.height = 4.0, fig.align = "center">>=
+  p
+  @
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plots}
+
+  <<>>=
+  nba <- read.csv("/home/adam/Documents/positions.csv")
+  p <- qplot(nba$Position, geom = "bar",                       #$
+      main = "Positions in the NBA", 
+      xlab = "Positions") + theme(axis.text.x = 
+      element_text(angle = 45, hjust = 1))
+  @
+\end{frame}
+
+\begin{frame}
+  \frametitle{Plots}
+
+  <<echo = FALSE, fig.width = 5.4, fig.height = 4.0, fig.align = "center">>=
+  p
+  @
+\end{frame}
+
+\section{References}
+
+\begin{frame}
+  \frametitle{References}
+
+  All data gathered from www.basketball-reference.com.\\
+  Database built using Oracle 11.2.0.2.0.
+
+\end{frame}
+
+\end{document}
